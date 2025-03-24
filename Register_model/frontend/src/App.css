@@ -1,0 +1,122 @@
+/* Full-page container */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #74EBD5, #ACB6E5);  /* Gradient background */
+  margin: 0;
+  padding: 20px;
+}
+
+/* Form container with top heading */
+.form-container {
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  padding: 60px 40px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 15px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transition: 0.3s;
+  animation: fadeIn 1s ease-in-out;
+  position: relative;  /* Add this for positioning */
+}
+
+/* Form heading - centered and larger */
+h2 {
+  position: absolute;    /* Position it at the top */
+  top: 10px;            /* Move the heading above the form */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #007bff;   /* Blue background */
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 28px;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+/* Form labels */
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+/* Input and file fields */
+input, select, textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+/* Focus effect */
+input:focus, select:focus, textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+/* Submit button */
+.btn-primary {
+  width: 100%;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.5);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 30px;
+  }
+  
+  h2 {
+    font-size: 24px;
+    top: -25px;
+    padding: 12px 20px;
+  }
+  
+  input, select, textarea {
+    font-size: 14px;
+  }
+  
+  .btn-primary {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
