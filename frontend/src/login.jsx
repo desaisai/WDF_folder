@@ -1,105 +1,80 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userType, setUserType] = useState("brand");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  const [errors, setErrors] = useState({});
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  // Sanitize input to prevent HTML injection
-  function sanitizeInput(value) {
-    return value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
-
-  // Form validation function
-  function validateForm() {
-    let errors = {};
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      errors.email = "Email is required.";
-    } else if (!emailRegex.test(formData.email)) {
-      errors.email = "Invalid email format.";
-    }
-
-    // Password validation
-    if (!formData.password) {
-      errors.password = "Password is required.";
-    } else if (formData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters.";
-    }
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  }
-
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: sanitizeInput(value) });
-  }
-
-  
-  function handleLogin() {
-    if (validateForm()) {
-      console.log("Logged in with:", formData);
-      alert("Login Successful!");
-
-
-      setFormData({
-        email: "",
-        password: "",
+    try {
+      const response = await axios.post("http://localhost:3001/login", {
+        email,
+        password,
+        userType,
       });
+
+      setMessage(response.data);
+      // Redirect to a welcome page or dashboard
+      setTimeout(() => navigate("/welcome"), 2000);
+    } catch (error) {
+      setMessage(error.response ? error.response.data : "Error logging in");
     }
-  }
+  };
 
   return (
     <div className="container mt-5">
       <div className="card shadow-sm p-4" style={{ maxWidth: "450px", margin: "0 auto" }}>
-        <h3 className="text-center mb-4">Login Form</h3>
+        <h3 className="text-center mb-4">Login</h3>
 
-        <form>
+        <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label>Email</label>
             <input
               type="email"
-              name="email"
               className="form-control"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
-            {errors.email && <small className="text-danger">{errors.email}</small>}
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Password</label>
+            <label>Password</label>
             <input
               type="password"
-              name="password"
               className="form-control"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
-            {errors.password && <small className="text-danger">{errors.password}</small>}
           </div>
 
-          <div className="d-grid gap-2">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleLogin}
+          <div className="mb-3">
+            <label>Login as:</label>
+            <select
+              className="form-control"
+              value={userType}
+              onChange={(e) => setUserType(e.target.value)}
             >
+              <option value="brand">Brand</option>
+              <option value="model">Model</option>
+            </select>
+          </div>
+
+          <div className="d-grid">
+            <button type="submit" className="btn btn-primary">
               Login
             </button>
-            {/* <Link to="/register" className="btn btn-success">Signup</Link> */}
           </div>
+
+          {message && <div className="alert alert-info mt-3">{message}</div>}
         </form>
       </div>
     </div>
