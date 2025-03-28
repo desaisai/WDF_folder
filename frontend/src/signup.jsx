@@ -4,10 +4,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
 function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,6 +13,7 @@ function Signup() {
 
   const [errors, setErrors] = useState({});
 
+  // Sanitize input to prevent XSS
   function sanitizeInput(value) {
     return value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
@@ -38,10 +35,11 @@ function Signup() {
       errors.email = "Invalid email format.";
     }
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;  // ✅ At least 1 uppercase, 1 lowercase, and min 6 characters
     if (!formData.password) {
       errors.password = "Password is required.";
-    } else if (formData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters.";
+    } else if (!passwordRegex.test(formData.password)) {
+      errors.password = "Password must contain at least 1 uppercase, 1 lowercase, and be 6+ characters.";
     }
 
     if (!formData.rePassword) {
@@ -56,38 +54,34 @@ function Signup() {
 
   function handleChange(e) {
     const { name, value } = e.target;
-
-    // Update both formData and individual states
     setFormData({ ...formData, [name]: sanitizeInput(value) });
-
-    if (name === "name") setName(value);
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-  };
-
-  function handleRegister() {
+  // Handle form submission
+  const handleRegister = () => {
     if (validateForm()) {
       axios
-      .post("http://localhost:3001/register", { name, email, password })
-      .then((result) => {
-        console.log(result)
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          rePassword: "",
+        .post("http://localhost:3001/register", formData)
+        .then((result) => {
+          console.log(result);
+          alert("User registered successfully!");
+
+          // Clear the form after successful registration
+          setFormData({
+            name: "",
+            email: "",
+            password: "",
+            rePassword: "",
+          });
+
+          setErrors({});
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("Error registering user. Try again.");
         });
-        setName("");
-        setEmail("");
-        setPassword("");
-      }).catch((err) => console.log(err));
     }
-  }
+  };
 
   const passwordsMatch =
     formData.password && formData.password === formData.rePassword;
@@ -100,12 +94,9 @@ function Signup() {
       >
         <h3 className="text-center mb-4">Signup Form</h3>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div className="mb-3">
-            <label
-              className="form-label fw-bold text-primary"
-              style={{ fontSize: "18px" }}
-            >
+            <label className="form-label fw-bold text-primary" style={{ fontSize: "18px" }}>
               Name
             </label>
             <input
@@ -116,16 +107,11 @@ function Signup() {
               value={formData.name}
               onChange={handleChange}
             />
-            {errors.name && (
-              <small className="text-danger">{errors.name}</small>
-            )}
+            {errors.name && <small className="text-danger">{errors.name}</small>}
           </div>
 
           <div className="mb-3">
-            <label
-              className="form-label fw-bold text-success"
-              style={{ fontSize: "18px" }}
-            >
+            <label className="form-label fw-bold text-success" style={{ fontSize: "18px" }}>
               Email
             </label>
             <input
@@ -136,16 +122,11 @@ function Signup() {
               value={formData.email}
               onChange={handleChange}
             />
-            {errors.email && (
-              <small className="text-danger">{errors.email}</small>
-            )}
+            {errors.email && <small className="text-danger">{errors.email}</small>}
           </div>
 
           <div className="mb-3">
-            <label
-              className="form-label fw-bold text-danger"
-              style={{ fontSize: "18px" }}
-            >
+            <label className="form-label fw-bold text-danger" style={{ fontSize: "18px" }}>
               Password
             </label>
             <input
@@ -156,16 +137,11 @@ function Signup() {
               value={formData.password}
               onChange={handleChange}
             />
-            {errors.password && (
-              <small className="text-danger">{errors.password}</small>
-            )}
+            {errors.password && <small className="text-danger">{errors.password}</small>}
           </div>
 
           <div className="mb-3">
-            <label
-              className="form-label fw-bold text-warning"
-              style={{ fontSize: "18px" }}
-            >
+            <label className="form-label fw-bold text-warning" style={{ fontSize: "18px" }}>
               Re-enter Password
             </label>
             <input
@@ -176,9 +152,7 @@ function Signup() {
               value={formData.rePassword}
               onChange={handleChange}
             />
-            {errors.rePassword && (
-              <small className="text-danger">{errors.rePassword}</small>
-            )}
+            {errors.rePassword && <small className="text-danger">{errors.rePassword}</small>}
           </div>
 
           <div className="d-grid gap-2">
