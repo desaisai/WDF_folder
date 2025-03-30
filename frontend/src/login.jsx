@@ -19,12 +19,12 @@ function Login() {
         userType,
       });
 
-      console.log('Login response:', response.data); // Debug log
+      console.log('Login response:', response.data); 
 
       if (userType === "model") {
-        navigate("/model-register");  // ✅ Redirect model to registration form
+        navigate("/model-register");  
       } else {
-        navigate("/welcome");  // ✅ Redirect brand to dashboard
+        navigate("/welcome");  
       }
     } catch (error) {
       console.error("Login failed:", error);
